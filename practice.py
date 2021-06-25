@@ -1,3 +1,4 @@
+# practice.py
 # 육십분법과 호도법 변환 연습
 import math
 
