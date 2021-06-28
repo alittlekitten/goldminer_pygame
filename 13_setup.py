@@ -5,6 +5,18 @@ import pygame # 파이게임 라이브러리 불러오기
 import math # radians를 사용하기 위해서 math 라이브러리 불러오기
 
 
+# 트레이 클래스 (보석 클래스와 거의 동일!)
+class Tray(pygame.sprite.Sprite):
+    def __init__(self, image, position):
+        super().__init__() # Sprite 상속받아옴
+        self.image = image
+        self.position = position
+        self.rect = image.get_rect(center = position)
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+
 # 집게 클래스 (보석 클래스와 거의 동일!)
 class Claw(pygame.sprite.Sprite):
     def __init__(self, image, position):
@@ -210,6 +222,11 @@ gemstone_group = pygame.sprite.Group() # 젬스톤 그룹 생성
 setup_gemstone() # 게임에 원하는 만큼의 보석을 정의
 
 
+# 트레이 이미지 불러오기 (보석 이미지 불러오는 방식과 동일!)
+tray_image = pygame.image.load(os.path.join(current_path, "tray.png"))
+tray = Tray(tray_image, (screen_width // 2, 110))
+
+
 # 집게 이미지 불러오기 (보석 이미지 불러오는 방식과 동일!)
 claw_image = pygame.image.load(os.path.join(current_path, "claw.png"))
 claw = Claw(claw_image, (screen_width // 2, 110)) # Claw 클래스를 이용해서 객체 생성!!
@@ -226,8 +243,9 @@ while running: # 게임이 진행중이라면? while문을 계속해서 반복�
             running = False # running 변수를 False로 바꿔준다!
 
         if event.type == pygame.MOUSEBUTTONDOWN: # 마우스 버튼이 눌렸을 때 집게를 뻗음
-            claw.set_direction(STOP) # 좌우 멈춤
-            to_x = move_speed # move_speed 만큼 빠르게 쭉 뻗음
+            if claw.direction != STOP: # 집게가 좌우로 이동중일 때만 마우스 이벤트 처리
+                claw.set_direction(STOP) # 좌우 멈춤
+                to_x = move_speed # move_speed 만큼 빠르게 쭉 뻗음
 
 
     # 화면의 양 옆과 아랫쪽 끝에 도달했을 때 다시 되돌아오도록 설정
@@ -262,6 +280,8 @@ while running: # 게임이 진행중이라면? while문을 계속해서 반복�
     screen.blit(background, (0, 0)) # 맨 왼쪽 맨 위부터 ((0,0) 좌표부터)그림을 그려주도록 만들어준다!
 
     gemstone_group.draw(screen) # gemstone_group에 있는 모든 Sprite를 screen에다가 그려라!
+
+    tray.draw(screen) # 트레이 그려주기
     claw.update(to_x)
     claw.draw(screen)
 
@@ -285,5 +305,5 @@ while running: # 게임이 진행중이라면? while문을 계속해서 반복�
 
     pygame.display.update() # 설정한 배경화면 이미지를 pygame에 반영! (display에 업데이트!!)
 
-pygame.time.delay(2000) # 2초 딜레이 (ms기준)
+pygame.time.delay(1500) # 1.5초 딜레이 (ms기준)
 pygame.quit() # while문을 빠져나가면 게임이 끝나도록 설정
